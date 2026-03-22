@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Логи</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="p-4">
+<div class="container">
+    <h2>Логи</h2>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Дата</th>
+            <th>Уровень сахара</th>
+            <th>Инсулин</th>
+            <th>Доза (мл)</th>
+            <th>Кормлен</th>
+            <th>Тип корма</th>
+            <th>Порция (г)</th>
+            <th></th> <!-- ОТКРЫТЬ ЛОГ -->
+            <th></th> <!-- УДАЛИТЬ ЛОГ -->
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="log : ${page.content}">
+            <td th:text="${#temporals.format(log.recordedAt, 'yyyy-MM-dd HH:mm')}">date</td>
+            <!-- <td th:text="${log.glucoseLevel}">0.0</td> -->
+            <td> <!-- Отображаем "Х" если уровень глюкозы -1.0 -->
+            <span th:if="${log.glucoseLevel} == -1.0">Х</span>
+            <span th:unless="${log.glucoseLevel} == -1.0" th:text="${log.glucoseLevel}">0.0</span>
+            </td>
+            <td th:text="${log.insulinInjected ? 'Да' : 'Нет'}"></td>
+            <td th:text="${log.insulinDoseMl}"></td>
+            <td th:text="${log.fed ? 'Да' : 'Нет'}"></td>
+            <td th:text="${log.foodType}"></td>
+            <td th:text="${log.portionGr}"></td>
+            <td><a th:href="@{/logs/{id}(id=${log.id})}" class="btn btn-sm btn-outline-primary">Открыть</a></td>
+            <td>
+                <!-- Крестик для удаления записи -->
+                <form th:action="@{/logs/delete/{id}(id=${log.id})}" method="post" style="display: inline;">
+                    <input type="hidden" name="_method" value="delete">
+                    <button type="submit" class="btn btn-sm btn-outline-danger"
+                            onclick="return confirm('Вы уверены, что хотите удалить эту запись?');">
+                        ×
+                    </button>
+                </form>
+            </td>
+
+        </tr>
+        </tbody>
+    </table>
+
+    <nav>
+        <ul class="pagination">
+            <li class="page-item" th:classappend="${page.first}? 'disabled'">
+                <a class="page-link" th:href="@{/logs(page=${page.number-1})}">Prev</a>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link">Стр. <span th:text="${page.number + 1}">1</span> / <span th:text="${page.totalPages}">1</span></span>
+            </li>
+            <li class="page-item" th:classappend="${page.last}? 'disabled'">
+                <a class="page-link" th:href="@{/logs(page=${page.number+1})}">Next</a>
+            </li>
+        </ul>
+    </nav>
+
+    <p><a href="/" class="btn btn-link">Назад</a></p>
+</div>
+</body>
+</html>

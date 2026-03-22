@@ -1,0 +1,37 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: catlogger_postgres
+    environment:
+      POSTGRES_DB: catlog
+      POSTGRES_USER: catuser
+      POSTGRES_PASSWORD: catpass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - catlogger-net
+
+  app:
+    build: .
+    container_name: catlogger_app
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/catlog
+      SPRING_DATASOURCE_USERNAME: catuser
+      SPRING_DATASOURCE_PASSWORD: catpass
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    ports:
+      - "8080:8080"
+    networks:
+      - catlogger-net
+
+networks:
+  catlogger-net:
+
+volumes:
+  postgres_data:

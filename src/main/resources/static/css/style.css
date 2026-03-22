@@ -1,0 +1,103 @@
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: sans-serif;
+}
+
+.page {
+  height: 97.5vh;
+  display: flex;
+  flex-direction: column;
+  padding: 30px; /* Добавляем отступы для всей страницы */
+}
+
+/* Верхняя часть страницы */
+.layout-main {
+  height: 80%;
+  display: flex; /* Делаем flex-контейнер */
+  gap: 30px; /* Расстояние между графиком и списком */
+  flex: 1;
+  flex-wrap: nowrap; /* запрет переноса вниз */
+
+}
+
+/* График */
+.chart-container {
+  flex: 0 0 60%;
+  min-width: 0; /* критически важно */
+  height: 80%;
+  border: 2px dashed #4caf50; /* для наглядности */
+  background: white;
+}
+
+/* Список + пагинация */
+.list-container {
+  flex: 0 0 35%;
+  min-width: 0; /*  без этого таблицы ломают layout */
+  display: flex;
+  flex-direction: column;
+  height: 90%;
+  border: 2px dashed #2196f3; /* для наглядности */
+  background: white;
+}
+
+.list {
+  flex: 1;
+  overflow-x: auto; /* горизонтальный скролл */
+  overflow-y: auto;
+}
+
+.pagination {
+  padding: 8px 0;
+  text-align: center;
+  margin-top: auto;
+}
+
+/* Нижняя панель */
+.control-panel {
+/*  border-top: 1px solid #ccc; */
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  align-items: center;
+  width: 60%;
+}
+
+/* Для таблицы - улучшаем отображение */
+.table {
+  width: 100%;
+  white-space: nowrap; /* таблица не переносит текст */
+}
+
+.table th {
+  background-color: #f8f9fa;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.chart-container canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto; /* горизонтальный скролл */
+}
+
+.comment-icon {
+    cursor: pointer;
+    font-size: 18px;
+    color: #6c757d;
+}
+
+.comment-icon:hover {
+    color: #0d6efd;
+}
+
+

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Детали записи</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="p-4">
+<div class="container">
+    <h2>Детали записи</h2>
+    <div class="card mt-3">
+        <div class="card-body">
+            <h5 class="card-title" th:text="'Запись от ' + ${catLog.recordedAt}"></h5>
+            
+            <p><strong>Уровень сахара:</strong> <span th:text="${catLog.glucoseLevel} + ' ммоль/л'"></span></p>
+            
+            <p><strong>Инсулин введён:</strong> <span th:text="${catLog.insulinInjected} ? 'Да' : 'Нет'"></span></p>
+            <p th:if="${catLog.insulinInjected}"><strong>Доза (мл):</strong> <span th:text="${catLog.insulinDoseMl}"></span></p>
+            
+            <p><strong>Покормлен:</strong> <span th:text="${catLog.fed} ? 'Да' : 'Нет'"></span></p>
+            <p th:if="${catLog.fed}"><strong>Тип корма:</strong> <span th:text="${catLog.foodType}"></span></p>
+            <p th:if="${catLog.fed}"><strong>Порция (г):</strong> <span th:text="${catLog.portionGr}"></span></p>
+            <p th:if="${catLog.fed}"><strong>Калорийность (ккал):</strong> <span th:text="${catLog.portionCal}"></span></p>
+            
+            <p><strong>Комментарий:</strong> <span th:text="${catLog.comment}"></span></p>
+
+            <a href="/logs" class="btn btn-primary mt-3">Назад к списку</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

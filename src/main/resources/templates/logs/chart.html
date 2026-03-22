@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>График уровня сахара</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+
+<body class="p-4">
+<div class="container">
+    <h2>График уровня сахара</h2>
+    <canvas id="glucoseChart" width="800" height="400"></canvas>
+    <p><a href="/logs" class="btn btn-link">К таблице</a></p>
+</div>
+
+
+<script th:inline="javascript">
+    const chartData = [[${chartData}]];
+    const labels = chartData.map(d => new Date(d.x).toLocaleString('ru-RU'));
+    const values = chartData.map(d => d.y);
+
+    const ctx = document.getElementById('glucoseChart').getContext('2d');
+
+    const myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Уровень сахара',
+                data: values,
+                borderColor: 'blue',
+                fill: false
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    min: 0,
+                    max: 30,
+                    ticks: {
+                        stepSize: 0.1
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+
+</body>
+</html>

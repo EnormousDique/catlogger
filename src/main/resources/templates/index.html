@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Page layout</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+ <!--   <link rel="stylesheet" href="../static/css/style.css" /> -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+
+</head>
+<body>
+
+<div class="page">
+
+    <!-- Верхняя часть -->
+    <div class="layout-main">
+
+        <div class="chart-container" >
+            <canvas id="glucoseChart"></canvas>
+
+        </div>
+
+
+
+
+        <div class="list-container">
+            <div class="list">
+                <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Дата</th>
+                        <th>Сахар</th>
+                        <!-- <th>Инсулин</th> -->
+                        <th>Доза (мл)</th>
+                        <!-- <th>Кормлен</th> -->
+                        <th>Корм</th>
+                        <th>Порция (г)</th>
+                        <th>✎</th> <!-- КОММЕНТ --> <!-- TODO -->
+                        <th></th> <!-- ОТКРЫТЬ ЛОГ -->
+                        <th></th> <!-- УДАЛИТЬ ЛОГ -->
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="log : ${page.content}">
+                        <td th:text="${#temporals.format(log.recordedAt, 'MM-dd HH:mm')}">date</td>
+                        <!-- <td th:text="${log.glucoseLevel}">0.0</td> -->
+                        <td> <!-- Отображаем "Х" если уровень глюкозы -1.0 -->
+                            <span th:if="${log.glucoseLevel} == -1.0">Х</span>
+                            <span th:unless="${log.glucoseLevel} == -1.0" th:text="${log.glucoseLevel}">0.0</span>
+                        </td>
+                        <!-- <td th:text="${log.insulinInjected ? 'Да' : 'Нет'}"></td> -->
+                        <td th:text="${log.insulinDoseMl}"></td>
+                        <!-- <td th:text="${log.fed ? 'Да' : 'Нет'}"></td> -->
+                        <td th:text="${log.foodType}"></td>
+                        <td th:text="${log.portionGr}"></td>
+                        <td class="text-center">
+                            <span th:if="${log.comment != null and !#strings.isEmpty(log.comment)}"
+                                    class="comment-icon"
+                                    data-bs-toggle="tooltip"
+                                    data-bs-placement="top"
+                                    th:attr="title=${log.comment}">
+                                ✏
+                            </span>
+                        </td>
+                        <td><a th:href="@{/logs/{id}(id=${log.id})}" class="btn btn-sm btn-outline-primary">Открыть</a></td>
+                        <td>
+                            <!-- Крестик для удаления записи -->
+                            <form th:action="@{/logs/delete/{id}(id=${log.id})}" method="post" style="display: inline;">
+                                <input type="hidden" name="_method" value="delete">
+                                <button type="submit" class="btn btn-sm btn-outline-danger"
+                                        onclick="return confirm('Вы уверены, что хотите удалить эту запись?');"
+                                >
+                                    ×
+                                </button>
+                            </form>
+                        </td>
+
+                    </tr>
+                    </tbody>
+                </table>
+                </div>
+
+            </div>
+
+            <div class="pagination">
+                <a href="/logs">=== ВСЕ ЗАПИСИ ===</a>
+            </div>
+
+        </div>
+
+
+    </div>
+
+    <div class="control-panel">
+        <a href="/logs/new" class="btn btn-success">Добавить запись</a>
+    </div>
+
+
+
+</div>
+
+<script th:inline="javascript">
+
+    const chartData = [[${chartData}]];
+    const labels = chartData.map(d => new Date(d.x).toLocaleString('ru-RU',{
+        day: '2-digit',
+        month: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+    }));
+    const values = chartData.map(d => d.y);
+
+    const ctx = document.getElementById('glucoseChart').getContext('2d');
+
+    // Создаем дополнительные датасеты для линий
+    const thresholdLines = [
+        { value: 4.0, color: 'green', label: 'Норма (4.0)' },
+        { value: 8.0, color: 'orange', label: 'Повышенный (8.0)' },
+        { value: 12.0, color: 'red', label: 'Высокий (12.0)' }
+    ];
+
+    const datasets = [
+        {
+            label: 'Уровень сахара',
+            data: values,
+            borderColor: 'blue',
+            fill: false,
+            tension: 0.1
+        }
+    ];
+
+    // Добавляем линии как отдельные датасеты
+    thresholdLines.forEach(line => {
+        // Создаем массив одинаковых значений для горизонтальной линии
+        const lineData = Array(labels.length).fill(line.value);
+
+        datasets.push({
+            label: line.label,
+            data: lineData,
+            borderColor: line.color,
+            borderWidth: 2,
+            borderDash: [5, 5],
+            fill: false,
+            pointRadius: 0, // убираем точки
+            pointHoverRadius: 0
+        });
+    });
+
+    const myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    min: 0,
+                    max: 30,
+                    ticks: {
+                        stepSize: 0.1
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        // Фильтруем легенду, чтобы показывать только основную линию
+                        filter: function(item, chart) {
+                            return item.datasetIndex === 0;
+                        }
+                    }
+                },
+                tooltip: {
+                    // Настраиваем тултипы только для основного датасета
+                    filter: function(tooltipItem) {
+                        return tooltipItem.datasetIndex === 0;
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl =>
+        new bootstrap.Tooltip(tooltipTriggerEl)
+    );
+</script>
+
+</body>
+
+</html>
