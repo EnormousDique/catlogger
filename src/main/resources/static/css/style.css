@@ -40,7 +40,7 @@ html, body {
   min-width: 0; /*  без этого таблицы ломают layout */
   display: flex;
   flex-direction: column;
-  height: 90%;
+  height: 80%;
   border: 2px dashed #2196f3; /* для наглядности */
   background: white;
 }
@@ -59,12 +59,7 @@ html, body {
 
 /* Нижняя панель */
 .control-panel {
-/*  border-top: 1px solid #ccc; */
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  align-items: center;
-  width: 60%;
+/* ПОКА ПУСТО */
 }
 
 /* Для таблицы - улучшаем отображение */
@@ -99,5 +94,14 @@ html, body {
 .comment-icon:hover {
     color: #0d6efd;
 }
+.btn-purple {
+    background-color: #6f42c1;
+    color: white;
+    border: none;
+}
 
+.btn-purple:hover {
+    background-color: #5a32a3;
+    color: white;
+}
 
