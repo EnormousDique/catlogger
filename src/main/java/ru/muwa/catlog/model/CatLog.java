@@ -4,13 +4,16 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "cat_log")
-@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class CatLog {
 
     public static final Double GLUCOSE_LEVEL_NOT_SPECIFIED = -1.0;
@@ -50,4 +53,18 @@ public class CatLog {
     // комментарий к записи
     private String comment;
 
+    @Override
+    public String toString() {
+        return " {" +
+                "Дата = " + recordedAt +
+                ", сахар = " + glucoseLevel +
+                ", укол = " + insulinInjected +
+                ", доза (мл) = " + insulinDoseMl +
+                ", покормлен = " + fed +
+                ", тип корма = " + foodType +
+                ", порция (гр) = " + portionGr +
+                ( comment.isEmpty()?"":
+                ", заметки = '" + comment + '\'' )+
+                '}';
+    }
 }

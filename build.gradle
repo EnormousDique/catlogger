@@ -1,26 +1,43 @@
 plugins {
     id("java")
-    id("org.springframework.boot") version "3.2.3"
-    id("io.spring.dependency-management") version "1.1.4"
+    id("org.springframework.boot") version "4.0.5"
+    id("io.spring.dependency-management") version "1.1.7"
 }
 
-group = "com.example"
-version = "0.0.1-SNAPSHOT"
+group = "ru.muwa"
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 
 repositories {
+
     mavenCentral()
+
+    // нужен для spring ai, т.к. версия под 4й spring boot пока что milestone
+    maven { url = uri("https://repo.spring.io/milestone") }
+}
+
+dependencyManagement {
+    imports { // dependency management для управления версиями зависимостей spring ai
+        mavenBom("org.springframework.ai:spring-ai-bom:2.0.0-M6")   // milestone версия
+    }
 }
 
 dependencies {
 
     // SPRING BOOT
     implementation("org.springframework.boot:spring-boot-starter-web")
+
+    // SPRING AI
+    // OPEN AI
+    // implementation("org.springframework.ai:spring-ai-openai-spring-boot-starter")
+    // Gemini chat
+    implementation("org.springframework.ai:spring-ai-starter-model-google-genai")
+    // Gemini embedding
+    implementation("org.springframework.ai:spring-ai-starter-model-google-genai-embedding")
 
     // THYMELEAF
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
@@ -30,13 +47,23 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
     // SECURITY
-    implementation("org.springframework.boot:spring-boot-starter-security")
+    // implementation("org.springframework.boot:spring-boot-starter-security")
 
     // PSQL
     runtimeOnly("org.postgresql:postgresql")
+    implementation("com.pgvector:pgvector:0.1.6")
+
 
     // LOMBOK
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
 
+    // FLYWAY
+//    implementation("org.flywaydb:flyway-core")
+//    implementation("org.flywaydb:flyway-database-postgresql")
+
+}
+
+tasks.bootJar {
+    archiveBaseName.set("cat-logger")
 }

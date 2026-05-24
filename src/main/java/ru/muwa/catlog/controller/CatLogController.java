@@ -134,5 +134,13 @@ public class CatLogController {
 
     }
 
+    @GetMapping("/migrate")
+    public String migrate(){
+
+        service.migrate();
+        return "done";
+
+    }
+
 }
 

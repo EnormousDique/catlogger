@@ -1,6 +1,9 @@
 package ru.muwa.catlog.service;
 
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import ru.muwa.catlog.model.CatLog;
 import ru.muwa.catlog.repository.CatLogRepository;
 import org.springframework.data.domain.Page;
@@ -10,13 +13,12 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class CatLogService {
 
     private final CatLogRepository repo;
-
-    public CatLogService(CatLogRepository repo) {
-        this.repo = repo;
-    }
+    private final VectorService vector;
 
     @Transactional
     public CatLog save(CatLog log) {
@@ -37,5 +39,13 @@ public class CatLogService {
     @Transactional
     public void delete(Long id) {
         repo.deleteById(id);
+    }
+
+
+    public void migrate() {
+        log.info("Начат процесс миграции");
+        repo.findAll().forEach
+                (vector::saveAsVector);
+        log.info("Завершен процесс миграции");
     }
 }
