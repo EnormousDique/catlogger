@@ -99,4 +99,56 @@ html, body {
     color: white;
 }
 
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5); display: flex;
+    justify-content: center; align-items: center; z-index: 1000;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+
+    /* Адаптивный размер под контент */
+    width: max-content;
+    height: max-content;
+
+    /* Ограничиваем размеры окна, чтобы оно не улетало за экран */
+    max-width: 80vw;
+    max-height: 80vh;
+
+    /* Переключаем в flex-режим, чтобы внутренности правильно делили высоту */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Контейнер для текста */
+#modal-body {
+    flex-grow: 1;              /* Занимает всё доступное место */
+    overflow-y: auto;          /* Включает вертикальную прокрутку, если текст не помещается */
+    padding-right: 10px;       /* Небольшой отступ справа, чтобы текст не прилипал к скроллбару */
+    margin-top: 10px;
+    white-space: pre-wrap;     /* Сохраняет переносы строк от ИИ */
+}
+
+#modal-body::-webkit-scrollbar {
+    width: 6px;
+}
+#modal-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+#modal-body::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+#modal-body::-webkit-scrollbar-thumb:hover {
+    background: #999;
+}
+
+.close-btn { position: absolute; top: 10px; right: 15px; cursor: pointer; font-size: 20px; }
+
 
