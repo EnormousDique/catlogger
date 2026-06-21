@@ -127,7 +127,7 @@
     insulinCheck.addEventListener("change", () => {
        if (insulinCheck.checked) {
            doseField.disabled = false;
-          doseHidden.value = "";
+          doseHidden.value = "0.02";
        } else {
           doseField.disabled = true;
           doseField.value = "";
@@ -144,6 +144,8 @@
         if (fedCheck.checked) {
             foodField.disabled = false;
             portionField.disabled = false;
+            foodField.value = "DRY";
+            portionField.value = "20";
         } else {
             foodField.disabled = true;
             foodField.value = "";

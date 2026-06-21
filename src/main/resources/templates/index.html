@@ -22,7 +22,7 @@
             <div class="control-panel">
                 <a href="/logs/new" class="btn btn-success"> Добавить запись </a>
                 <a href="/logs" class="btn btn-primary"> Все записи </a>
-                <a class="btn btn-purple" > Руководство </a>
+                <a class="btn btn-purple" onclick="openGuide()" > ИИ ассистент </a>
                 <a class="btn btn-danger" > Шприцы </a>
 
             </div>
@@ -90,6 +90,18 @@
             <div class="pagination">
             </div>
 
+        </div>
+    </div>
+</div>
+
+<div id="guideModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <span class="close-btn" onclick="toggleModal()">&times;</span>
+        <h5>Совет ИИ ассистента</h5>
+        <hr>
+        <div id="modal-body">
+            <div id="loading-spinner">Загрузка данных...</div>
+            <div id="result-text" style="display: none;"></div>
         </div>
     </div>
 </div>
@@ -187,6 +199,39 @@
     );
 </script>
 
+
+<script>
+
+    const modal = document.getElementById('guideModal');
+    const resultDiv = document.getElementById('result-text');
+    const loader = document.getElementById('loading-spinner');
+
+    async function openGuide() {
+        modal.style.display = 'flex';
+
+        if (resultDiv.textContent && resultDiv.textContent !== "") return;
+
+        try {
+            const response = await fetch('/advice');
+
+            if (!response.ok) throw new Error('Ошибка сети');
+
+            const data = await response.json();
+            resultDiv.textContent = data.advice;
+
+        } catch (error) {
+            resultDiv.textContent = "Не удалось загрузить совет.";
+            console.error(error);
+        } finally {
+            loader.style.display = 'none';
+            resultDiv.style.display = 'block';
+        }
+    }
+
+    function toggleModal() {
+        modal.style.display = (modal.style.display === 'none') ? 'flex' : 'none';
+    }
+</script>
 </body>
 
 </html>
